@@ -37,22 +37,7 @@ while(reader.hasNext){
 
 //println(pat.get("CN112310387A"))
 //pat.keySet().forEach(a => println(pat.get(a)))
-//println(patentsList.size())
-//println(pat.isJsonObject)
-//println(pat.get("CN111295360A"))
-//println(pat.get("US20180151876A1"))
 
-//println(pat.get("US20180151876A1"))
-
-//val r = unifiedJedis.jsonSet("ka:patent:CN112310387B", pat)
-
-
-//unifiedJedis.jsonSet("ka:patent:US20180151876A1", pat.get("US20180151876A1"))
-
-//pat.keySet().forEach(pname => unifiedJedis.jsonSet(s"ka:patent:$pname", pat.get(pname)))
-
-
-//val r = unifiedJedis.jsonSet("ka:patent:CN112310387B", pat)
 
 private def sendRedis(jsonName: String, json: JsonElement, uri: UnifiedJedis)={
   uri.jsonSet(s"ka:patent:$jsonName", json)
