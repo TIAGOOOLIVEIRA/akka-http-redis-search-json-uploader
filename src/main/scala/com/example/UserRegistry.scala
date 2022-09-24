@@ -1,16 +1,16 @@
 package com.example
 
 //#user-registry-actor
-import akka.actor.TypedActor.dispatcher
-import akka.actor.typed.ActorRef
-import akka.actor.typed.Behavior
+import akka.actor.TypedActor.{context, dispatcher}
+import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.model.{HttpResponse, Multipart, StatusCodes}
-import akka.stream.Materializer
+import akka.stream.{ActorMaterializer, Materializer}
 import akka.util.ByteString
 
 import scala.collection.immutable
 import java.io.FileOutputStream
+import java.nio.file.Paths
 import java.util.UUID
 import scala.util.Failure
 
@@ -29,6 +29,7 @@ object UserRegistry {
   final case class DeleteUser(name: String, replyTo: ActorRef[ActionPerformed]) extends Command
   final case class UploadFile(content: Multipart.FormData, replyTo: ActorRef[ActionWithCorrelationPerformed]) extends Command
 
+  //implicit val mat = ActorMaterializer()(context)
 
   final case class GetUserResponse(maybeUser: Option[User])
   final case class ActionPerformed(description: String)
@@ -37,6 +38,7 @@ object UserRegistry {
   def apply(): Behavior[Command] = registry(Set.empty)
 
   private def registry(users: Set[User]): Behavior[Command] =
+
     Behaviors.receiveMessage {
       case GetUsers(replyTo) =>
         replyTo ! Users(users.toSeq)
@@ -55,9 +57,10 @@ object UserRegistry {
         replyTo ! ActionWithCorrelationPerformed(s"File uploading...", uuid)
         val temp = System.getProperty("java.io.tmpdir")
         val filePath = temp + "/" + uuid
+        /*
         processFile(filePath, content).map {fileSize => println(s"filesize $fileSize")}.onComplete{
           case Failure(t) => println("An error has occurred: " + t.getMessage)
-        }
+        }*/
 
         //generate hash id over doc, return to caller
         //pipelining two tasks:
@@ -66,7 +69,8 @@ object UserRegistry {
         Behaviors.same
     }
 
-  private def processFile(filePath: String, fileData: Multipart.FormData)(implicit materializer: Materializer) = {
+  /*
+  private def processFile(filePath: String, fileData: Multipart.FormData) = {
     val fileOutput = new FileOutputStream(filePath)
     fileData.parts.mapAsync(1) { bodyPart ⇒
       def writeFileOnLocal(array: Array[Byte], byteString: ByteString): Array[Byte] = {
@@ -76,6 +80,6 @@ object UserRegistry {
       }
       bodyPart.entity.dataBytes.runFold(Array[Byte]())(writeFileOnLocal)
     }.runFold(0)(_ + _.length)
-  }
+  }*/
 }
 //#user-registry-actor

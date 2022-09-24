@@ -19,6 +19,7 @@ class JsonPipelineActor  extends Actor{
   override def receive: Receive = {
     case ExtractHash(filePath) =>
       sender() ! ResponseHashFile("")
+      //leverage UUID unique https://github.com/ulid/spec
     case LoadJsonToRedis(filePath) => ???
   }
 }
