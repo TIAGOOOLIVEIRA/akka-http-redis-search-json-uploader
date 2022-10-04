@@ -4,17 +4,13 @@ import redis.clients.jedis.UnifiedJedis
 import java.nio.file.Files
 import java.nio.file.Paths
 import com.google.gson.{Gson, JsonElement, JsonObject}
-import ujson.InputStreamParser
 
 import java.io.InputStreamReader
 
 
 val gson = new Gson
 
-//val reader = Files.newBufferedReader(Paths.get("Users/tiagoooliveira/Documents/dev/scala/akka-http-quickstart-scala/src/main/resources/patent-13062022-1.json"))
-//val pat = gson.fromJson(reader, classOf[JsonObject])
-
-val is = Files.newInputStream(Paths.get("Users/tiagoooliveira/Documents/dev/scala/akka-http-quickstart-scala/src/main/resources/patents-13062022.json"))
+val is = Files.newInputStream(Paths.get(getClass.getClassLoader.getResource("patents-13062022.json").getPath))
 val reader = new JsonReader(new InputStreamReader(is))
 
 val unifiedJedis: UnifiedJedis = new UnifiedJedis("redis://localhost:6379")

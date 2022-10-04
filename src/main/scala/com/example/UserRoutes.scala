@@ -107,7 +107,8 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit val syst
 
               val writeOperationFuture = partsSource.runWith(filePartsSink)
               onComplete(writeOperationFuture) {
-                case Success(_) => complete("File uploaded.") //send message to process json in a actor JsonPipelineActor
+                case Success(_) => complete("File uploaded.")
+                  //send message to process json in a actor JsonPipelineActor
                 case Failure(ex) => complete(s"File failed to upload: $ex")
               }
             }
