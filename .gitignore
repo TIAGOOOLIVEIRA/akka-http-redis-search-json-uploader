@@ -217,3 +217,5 @@ Temporary Items
 
 target/
 .DS_Store
+src/main/resources/patent-13062022-1.json
+src/main/resources/patents-13062022.json
