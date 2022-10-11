@@ -25,7 +25,6 @@ class JsonPipelineActor  extends Actor{
 
   //val nerActor = ActorSystem("pdf-processor").actorOf(Props[JsonPipelineActor], "NER_pdf")
 
-
   override def receive: Receive = {
     case LoadJsonToRedis(path) =>
       val countDoc = readStreamFile(path)
@@ -33,27 +32,6 @@ class JsonPipelineActor  extends Actor{
     case ExtractHash(filePath) =>
       sender() ! ResponseHashFile("")
       //leverage UUID unique https://github.com/ulid/spec
-  }
-
-  private def sendRedis(path: String): Unit ={
-    val unifiedJedis: UnifiedJedis = new UnifiedJedis("redis://localhost:6379")
-    val gson = new Gson
-
-    val is = Files.newInputStream(Paths.get(path))
-    val reader = new JsonReader(new InputStreamReader(is))
-
-    reader.beginObject()
-
-    var i = 0
-    while(reader.hasNext){
-      i+=1
-      println(i)
-      println(reader.nextName())
-      val r = unifiedJedis.jsonSet(s"ka:patent:$i", gson.fromJson(reader, classOf[JsonObject]).toString)
-    }
-
-    reader.close()
-    unifiedJedis.close()
   }
 
   def readStreamFile(path: String): Int ={
