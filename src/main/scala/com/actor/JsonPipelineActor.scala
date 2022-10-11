@@ -28,8 +28,8 @@ class JsonPipelineActor  extends Actor{
 
   override def receive: Receive = {
     case LoadJsonToRedis(path) =>
-      sendRedis(path)
-      sender() !  ResponseLoadJsonToRedis("", 0, 0)
+      val countDoc = readStreamFile(path)
+      sender() !  ResponseLoadJsonToRedis("", countDoc, 0)
     case ExtractHash(filePath) =>
       sender() ! ResponseHashFile("")
       //leverage UUID unique https://github.com/ulid/spec
@@ -44,7 +44,6 @@ class JsonPipelineActor  extends Actor{
 
     reader.beginObject()
 
-    //remove this mutable counter
     var i = 0
     while(reader.hasNext){
       i+=1
@@ -55,5 +54,33 @@ class JsonPipelineActor  extends Actor{
 
     reader.close()
     unifiedJedis.close()
+  }
+
+  def readStreamFile(path: String): Int ={
+    val unifiedJedis: UnifiedJedis = new UnifiedJedis("redis://localhost:6379")
+
+    val is = Files.newInputStream(Paths.get(path))
+    val reader = new JsonReader(new InputStreamReader(is))
+    reader.beginObject()
+
+    val countDoc = iterateCount(reader, unifiedJedis)
+
+    reader.close()
+    unifiedJedis.close()
+
+    countDoc
+  }
+
+  def iterateCount(reader: JsonReader,unifiedJedis: UnifiedJedis): Int = {
+    val gson = new Gson
+
+    def icount(acc: Int): Int = {
+      if (reader.hasNext) {
+        val r = unifiedJedis.jsonSet(s"ka:patent:$acc", gson.fromJson(reader, classOf[JsonObject]).toString)
+        icount(1 + acc)
+      } else acc
+    }
+
+    icount(0)
   }
 }
