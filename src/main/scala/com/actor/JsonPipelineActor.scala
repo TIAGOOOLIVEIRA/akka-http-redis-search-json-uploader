@@ -55,3 +55,8 @@ class JsonPipelineActor  extends Actor{
     icount(0)
   }
 }
+
+object JsonPipelineActor {
+  def initiate(port: Int): Unit = {
+  }
+}
