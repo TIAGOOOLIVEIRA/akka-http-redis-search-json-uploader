@@ -11,17 +11,10 @@ import com.google.gson.{Gson, JsonElement, JsonObject}
 
 import java.io.InputStreamReader
 
-object  JsonPipelineActor {
-  def props = Props[JsonPipelineActor]
-
-  case class LoadJsonToRedis(pathFile: String)
-  case class ResponseLoadJsonToRedis(hash: String, records: Int, timeElaspsed: Int)
-  case class ExtractHash(pathFile: String)
-  case class ResponseHashFile(hash: String)
-}
+import com.commons._
 
 class JsonPipelineActor  extends Actor{
-  import com.actor.JsonPipelineActor._
+  import com.commons._
 
   //val nerActor = ActorSystem("pdf-processor").actorOf(Props[JsonPipelineActor], "NER_pdf")
 
@@ -60,5 +53,10 @@ class JsonPipelineActor  extends Actor{
     }
 
     icount(0)
+  }
+}
+
+object JsonPipelineActor {
+  def initiate(port: Int): Unit = {
   }
 }
