@@ -10,6 +10,7 @@ import java.nio.file.Paths
 import com.google.gson.{Gson, JsonElement, JsonObject}
 
 import java.io.InputStreamReader
+import com.typesafe.config.ConfigFactory
 
 import com.commons._
 
@@ -28,7 +29,11 @@ class JsonPipelineActor  extends Actor{
   }
 
   def readStreamFile(path: String): Int ={
-    val unifiedJedis: UnifiedJedis = new UnifiedJedis("redis://localhost:6379")
+    val redissearchprotocol = ConfigFactory.load().getString("RedisSearch.protocol")
+    val redissearchhost = ConfigFactory.load().getString("RedisSearch.host")
+    val redissearchport = ConfigFactory.load().getString("RedisSearch.port")
+
+    val unifiedJedis: UnifiedJedis = new UnifiedJedis(s"$redissearchprotocol://$redissearchhost:$redissearchport")
 
     val is = Files.newInputStream(Paths.get(path))
     val reader = new JsonReader(new InputStreamReader(is))
