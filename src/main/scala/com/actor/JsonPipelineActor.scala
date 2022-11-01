@@ -1,7 +1,6 @@
 package com.actor
 
-import akka.actor.{Actor, ActorSystem, Props}
-
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import com.google.gson.stream.JsonReader
 import redis.clients.jedis.UnifiedJedis
 
@@ -11,7 +10,6 @@ import com.google.gson.{Gson, JsonElement, JsonObject}
 
 import java.io.InputStreamReader
 import com.typesafe.config.ConfigFactory
-
 import com.commons._
 
 class JsonPipelineActor  extends Actor{
@@ -62,6 +60,19 @@ class JsonPipelineActor  extends Actor{
 }
 
 object JsonPipelineActor {
+
+  private var _jsonPipeline: ActorRef = _
+
   def initiate(port: Int): Unit = {
+    print("Json Pipeline Actor cluster initializing...")
+
+    val config = ConfigFactory.load("cluster_loadbalancer.conf").getConfig("JsonPipeline")
+
+    val system = ActorSystem("ClusterSystem", config)
+
+    _jsonPipeline = system.actorOf(Props[JsonPipelineActor], name = "JsonPipeline")
+
   }
+
+  def getJsonPipelineActor: ActorRef = _jsonPipeline
 }
