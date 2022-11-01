@@ -46,6 +46,8 @@ object WSFileUploader extends App {
       onComplete(writeOperationFuture) {
         case Success(_) =>
           //send message to ClusterFilePipeline
+          val pdfProcessor = system.actorOf(PDFProcessor.props, "pdf-processor")
+
           complete("File uploaded.")
         case Failure(ex) => complete(s"File failed to upload: $ex")
       }
