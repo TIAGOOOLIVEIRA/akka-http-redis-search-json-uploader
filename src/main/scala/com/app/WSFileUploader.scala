@@ -44,7 +44,9 @@ object WSFileUploader extends App {
 
       val writeOperationFuture = partsSource.runWith(filePartsSink)
       onComplete(writeOperationFuture) {
-        case Success(_) => complete("File uploaded.")
+        case Success(_) =>
+          //send message to ClusterFilePipeline
+          complete("File uploaded.")
         case Failure(ex) => complete(s"File failed to upload: $ex")
       }
     }
