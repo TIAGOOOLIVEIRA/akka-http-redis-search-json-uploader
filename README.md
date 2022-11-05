@@ -101,12 +101,6 @@ It mainly leverages Akka http services for exposing the Rest resources and Akka 
 * [![React][React.js]][React-url]
 * Redis
 * Akka
-<!-- * [![Vue][Vue.js]][Vue-url] -->
-<!-- * [![Angular][Angular.io]][Angular-url] -->
-<!-- * [![Svelte][Svelte.dev]][Svelte-url] -->
-<!-- * [![Laravel][Laravel.com]][Laravel-url] -->
-<!-- * [![Bootstrap][Bootstrap.com]][Bootstrap-url] -->
-<!-- * [![JQuery][JQuery.com]][JQuery-url] -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
