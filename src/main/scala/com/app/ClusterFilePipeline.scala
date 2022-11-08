@@ -1,14 +1,32 @@
 package com.app
+import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.cluster._
 import akka.routing.{ActorRefRoutee, RoundRobinRoutingLogic, Router}
-import com.actor.JsonPipelineActor
+import com.actor.{JsonPipelineActor, MasterJsonPipeline}
 import com.commons._
+import com.typesafe.config.ConfigFactory
+
+//https://github.com/rockthejvm/akka-remoting-clustering/blob/master/src/main/scala/part3_clustering/ClusteringExample.scala
 
 object ClusterFilePipeline extends App {
   import com.commons._
 
-  JsonPipelineActor.initiate(2551)
-  JsonPipelineActor.initiate(2552)
+  def createNode(port: Int, role: String, props: Props, actorName: String): ActorRef = {
+    val config = ConfigFactory.parseString(
+      s"""
+         |akka.cluster.roles = ["$role"]
+         |akka.remote.artery.canonical.port = $port
+       """.stripMargin)
+      .withFallback(ConfigFactory.load("clusteringExample.conf"))
 
-  //JsonPipelineActor.getJsonPipelineActor ! LoadJsonToRedis("test")
+    val system = ActorSystem("JsonPipelineCluster", config)
+    system.actorOf(props, actorName)
+  }
+
+  val master = createNode(2551, "master", Props[MasterJsonPipeline], "master")
+  createNode(2552, "worker", Props[JsonPipelineActor], "worker")
+  createNode(2554, "worker", Props[JsonPipelineActor], "worker")
+
+  Thread.sleep(10000)
+  //master ! LoadJsonToRedis("test.json")
 }
