@@ -34,6 +34,22 @@ while(reader.hasNext){
 //println(pat.get("CN112310387A"))
 //pat.keySet().forEach(a => println(pat.get(a)))
 
+def solution(arr: Array[Int]): Int = {
+
+  val vmi = (x: Int, y: Int) => x min y
+  val vma = (x: Int, y: Int) => x max y
+
+  //val minRlf = arr.foldLeft(Int.MaxValue)(_ min _)
+  //val minRlf = arr.foldLeft(Int.MaxValue)(vmi)
+  val minRlf = arr.reduceLeft(vmi)
+  //val maxRlf = arr.foldLeft(Int.MinValue)(_ max _)
+  //val maxRlf = arr.foldLeft(Int.MinValue)(vma)
+  val maxRlf = arr.reduceLeft(vma)
+
+  val positiveMax = Math.abs(maxRlf)
+
+  if(Math.abs(minRlf) == positiveMax) positiveMax else 0
+}
 
 private def sendRedis(jsonName: String, json: JsonElement, uri: UnifiedJedis)={
   uri.jsonSet(s"ka:patent:$jsonName", json)
