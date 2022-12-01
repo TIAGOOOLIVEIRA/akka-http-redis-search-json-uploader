@@ -78,7 +78,7 @@ class MasterJsonPipeline extends Actor with ActorLogging {
 
   def handleJob: Receive = {
     case LoadJsonToRedis(filename) =>
-      val aggregator = context.actorOf(Props[Aggregator], "aggregator")
+      val aggregator = context.actorOf(Props[AggregatorActor], "aggregator")
 
       val redissearchprotocol = ConfigFactory.load().getString("RedisSearch.protocol")
       val redissearchhost = ConfigFactory.load().getString("RedisSearch.host")
@@ -104,18 +104,4 @@ class MasterJsonPipeline extends Actor with ActorLogging {
       worker ! SendRecordToRedis(reader, unifiedJedis, aggregator)
       Thread.sleep(10)
 }
-}
-
-class Aggregator extends Actor with ActorLogging {
-  context.setReceiveTimeout(3 seconds)
-
-  override def receive: Receive = online(0)
-
-  def online(totalCount: Int): Receive = {
-    case ProcessRecordResult(count) =>
-      context.become(online(totalCount + count))
-    case ReceiveTimeout =>
-      log.info(s"TOTAL COUNT: $totalCount")
-      context.setReceiveTimeout(Duration.Undefined)
-  }
 }

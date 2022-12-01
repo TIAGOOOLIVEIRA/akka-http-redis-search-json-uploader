@@ -24,8 +24,11 @@ object ClusterFilePipeline extends App {
   }
 
   val master = createNode(2551, "master", Props[MasterJsonPipeline], "master")
-  createNode(2552, "worker", Props[JsonPipelineActor], "worker")
-  createNode(2554, "worker", Props[JsonPipelineActor], "worker")
+  //registering worker actors
+  //must trigger handler handleWorkerRegistration
+  //missing the Address object for matching match case "case pair: (Address, ActorRef)"
+  master ! createNode(2552, "worker", Props[JsonPipelineActor], "worker")
+  master ! createNode(2554, "worker", Props[JsonPipelineActor], "worker")
 
   Thread.sleep(10000)
   //master ! LoadJsonToRedis("test.json")
