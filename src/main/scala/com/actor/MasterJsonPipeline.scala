@@ -89,6 +89,8 @@ class MasterJsonPipeline extends Actor with ActorLogging {
       val is = Files.newInputStream(Paths.get(filename))
       val reader = new JsonReader(new InputStreamReader(is))
       reader.beginObject()
+
+      //here to avoid recursion at function level. So one handler sends message as a record out of the json file to another handler.
       while(reader.hasNext) {
         self ! SendRecordToRedis(reader, unifiedJedis, aggregator)
       }
