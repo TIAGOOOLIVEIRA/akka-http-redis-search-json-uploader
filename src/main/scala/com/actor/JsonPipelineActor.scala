@@ -18,6 +18,9 @@ class JsonPipelineActor  extends Actor{
   //val nerActor = ActorSystem("pdf-processor").actorOf(Props[JsonPipelineActor], "NER_pdf")
 
   override def receive: Receive = {
+    case SendRecordToRedis(reader, unifiedJedis, aggregator) =>
+      //send to redissearch
+      //return to sender the counter
     case LoadJsonToRedis(path) =>
       val countDoc = readStreamFile(path)
       sender() !  ResponseLoadJsonToRedis("", countDoc, 0)
