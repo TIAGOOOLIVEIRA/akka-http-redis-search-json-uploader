@@ -13,7 +13,7 @@ import akka.util.ByteString
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
-object WSFileUploader extends App {
+object WSManagementRest extends App {
   implicit val system = ActorSystem()
   implicit val materializer = ActorMaterializer()
   import system.dispatcher
